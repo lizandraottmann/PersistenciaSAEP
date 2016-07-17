@@ -22,10 +22,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author Lizandra Ottmann
- */
+
 public class NotaDAO {
 
     public void removeNotaPeloParecer(String identificadorParecer) throws Exception {
