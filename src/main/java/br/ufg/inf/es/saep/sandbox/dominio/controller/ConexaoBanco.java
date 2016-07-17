@@ -19,7 +19,7 @@ public class ConexaoBanco {
         String usuario = "sa";
         String senha = "2068";
         String driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-        String instancia = "//192.168.25.2";
+        String instancia = "//192.168.1.7";
         Connection conn = null;
         
         //Método estático para inicializar o driver JDBC (Arquivo inserido em Bibliotecas)
