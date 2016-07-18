@@ -84,7 +84,7 @@ public class PontuacaoDAO {
 
         String sql = "INSERT INTO Pontuacao"
                 + "           (idParecer"
-                + "           ,idNome"
+                + "           ,nome"
                 + "           ,idValor,idPontuacao)"
                 + "VALUES" + "(?,?,?,?)";
 
@@ -100,12 +100,12 @@ public class PontuacaoDAO {
 
     public List<Pontuacao> obtenhaListaPontuacaoPorParecer(String identificadorParecer) throws SQLException {
 
-         String query = String.format("SELECT idParecer" +
-                                "      ,idPontuacao" +
-                                "      ,idValor" +
-                                "      ,nome" +
-                                "  FROM Pontuacao" +
-                                " where idParecer='%s'", identificadorParecer);
+        String query = String.format("SELECT idParecer"
+                + "      ,idPontuacao"
+                + "      ,idValor"
+                + "      ,nome"
+                + "  FROM Pontuacao"
+                + " where idParecer='%s'", identificadorParecer);
 
         List<Pontuacao> listaPontuacao = null;
 
@@ -122,13 +122,13 @@ public class PontuacaoDAO {
                 if (null == listaPontuacao) {
                     listaPontuacao = new ArrayList<>();
                 }
-                
+
                 Valor objValor = (new ValorDAO()).obtenhaValorPeloID(rs.getObject(3).toString());
-                
-                Pontuacao objPontuacao = new Pontuacao(rs.getObject(4).toString(),objValor);
-                
+
+                Pontuacao objPontuacao = new Pontuacao(rs.getObject(4).toString(), objValor);
+
                 listaPontuacao.add(objPontuacao);
-                         
+
             }
 
         } catch (SQLException ex) {
@@ -154,7 +154,59 @@ public class PontuacaoDAO {
         }
 
         return listaPontuacao;
-        
+
+    }
+
+    public Pontuacao obtenhaPontuacao(String identificadorPontuacao) throws SQLException {
+
+        Pontuacao objPontuacao = null;
+        String query = String.format("SELECT idParecer"
+                + "      ,idPontuacao"
+                + "      ,idValor"
+                + "      ,nome"
+                + "  FROM Pontuacao"
+                + " where idPontuacao='%s'", identificadorPontuacao);
+
+        try (
+                //Abre a conexão com o banco de dados utilizando a classe criada
+
+                Connection conn = ConexaoBanco.abreConexao()) {
+            final ResultSet rs = ConexaoBanco.executeSelect(conn, query);
+            final ResultSetMetaData metaRS = rs.getMetaData();
+            final int columnCount = metaRS.getColumnCount();
+
+            if (rs.next()) {
+
+                Valor objValor = (new ValorDAO()).obtenhaValorPeloID(rs.getObject(3).toString());
+
+                objPontuacao = new Pontuacao(rs.getObject(4).toString(), objValor);
+
+            }
+
+        } catch (SQLException ex) {
+
+            Logger.getLogger(ResolucaoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new SQLException("Erro ao obter uma resolução:" + ex.getMessage());
+
+        } catch (TipoDeRegraInvalido ex) {
+            Logger.getLogger(ResolucaoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new TipoDeRegraInvalido("Erro ao obter uma resolução:" + ex.getMessage());
+
+        } catch (CampoExigidoNaoFornecido ex) {
+            Logger.getLogger(ResolucaoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new CampoExigidoNaoFornecido("Erro ao obter uma resolução:" + ex.getMessage());
+
+        } catch (Exception ex) {
+            Logger.getLogger(ResolucaoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new CampoExigidoNaoFornecido("Erro ao obter uma resolução:" + ex.getMessage());
+
+        } finally {
+
+            out.close();
+        }
+
+        return objPontuacao;
+
     }
 
 }

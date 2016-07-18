@@ -82,12 +82,12 @@ public class TipoDAO {
 
     public Tipo obtenhaDadosdeTipoPeloNome(String identificadorTipo) throws Exception {
 
-          String query = "SELECT nome"
+        String query = "SELECT nome"
                 + "      ,id"
                 + "      ,descricao"
                 + "  FROM Tipo"
                 + " where nome like " + "'%" + identificadorTipo + "%'";
-                
+
         Tipo objTipo = null;
         Set<Atributo> listaAtributos = null;
         AtributoDAO objAtributo = new AtributoDAO();
@@ -138,7 +138,6 @@ public class TipoDAO {
 
     public List<Tipo> obtenhaListaDadosdeTipo(String identificadorTipo) throws Exception {
 
-                      
         String query = "SELECT nome"
                 + "      ,id"
                 + "      ,descricao"
@@ -211,17 +210,15 @@ public class TipoDAO {
             Logger.getLogger(ResolucaoDAO.class.getName()).log(Level.SEVERE, null, ex);
             throw new TipoDeRegraInvalido("Erro ao obter um tipo:" + ex.getMessage());
 
-        } 
+        }
 
-            out.close();
-        
+        out.close();
 
         return tipo;
 
     }
 
     public void removeTipo(String identificador) throws Exception {
-        
 
         String query = String.format("delete from Tipo where id='%s'", identificador);
         String auxStr = "";

@@ -187,7 +187,7 @@ public class ResolucaoDAOImpl implements ResolucaoRepository {
 
     @Override
     public void removeTipo(String codigo) {
-      
+
         if (!"".equals(codigo)) {
 
             TipoDAO objTipo = new TipoDAO();
@@ -213,7 +213,7 @@ public class ResolucaoDAOImpl implements ResolucaoRepository {
 
     @Override
     public Tipo tipoPeloCodigo(String codigo) {
-           
+
         if (!"".equals(codigo)) {
 
             TipoDAO objTipo = new TipoDAO();
@@ -226,7 +226,7 @@ public class ResolucaoDAOImpl implements ResolucaoRepository {
                 Logger.getLogger(ResolucaoDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
                 throw new ResolucaoUsaTipoException("Erro ao remover um tipo:" + ex.getMessage());
             }
-            
+
         } else {
             return null;
         }
@@ -235,7 +235,7 @@ public class ResolucaoDAOImpl implements ResolucaoRepository {
 
     @Override
     public List<Tipo> tiposPeloNome(String nome) {
-      
+
         if (!"".equals(nome)) {
 
             TipoDAO objTipo = new TipoDAO();

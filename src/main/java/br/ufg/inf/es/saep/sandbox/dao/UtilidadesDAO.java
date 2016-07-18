@@ -15,39 +15,38 @@ import java.util.logging.Logger;
  * @author Lizandra Ottmann
  */
 public class UtilidadesDAO {
-    
-    public String obtenhaProximoID(String nomeTabela, String campoTabela) throws SQLException{
-           
-            String query = String.format("select Max(%1$s) maior"
-                  + " from %2$s ", nomeTabela,campoTabela);
-       
+
+    public String obtenhaProximoID(String nomeTabela, String campoTabela) throws SQLException {
+
+        String query = String.format("select Max(%1$s) maior"
+                + " from %2$s ", nomeTabela, campoTabela);
+        
+         String query2 = "select Max("+ campoTabela +") maior"
+                + " from " + nomeTabela;
 
         try (
                 //Abre a conexão com o banco de dados utilizando a classe criada
 
                 Connection conn = ConexaoBanco.abreConexao()) {
-            final ResultSet rs = ConexaoBanco.executeSelect(conn, query);
+            final ResultSet rs = ConexaoBanco.executeSelect(conn, query2);
             final ResultSetMetaData metaRS = rs.getMetaData();
             final int columnCount = metaRS.getColumnCount();
 
             if (rs.next()) {
-
-                return rs.getObject(1).toString()+ "1";
+              String strAux = rs.getObject(1).toString().trim() + "1";
+                return strAux.trim();
             }
 
         } catch (Exception ex) {
-            Logger.getLogger(ResolucaoDAO.class.getName()).log(Level.SEVERE, null, ex);
-            throw new CampoExigidoNaoFornecido("Erro ao obter uma resolução:" + ex.getMessage());
+            return "1";
 
         } finally {
 
             out.close();
         }
 
-        return "";      
-        
+        return "";
+
     }
-    
-    
-    
+
 }

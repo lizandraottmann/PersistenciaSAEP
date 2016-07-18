@@ -98,7 +98,6 @@ public class ParecerDAO {
 
     }
 
- 
     public String obtenhaDadosParecerPelaResolucao(String identificadorResolucao) throws Exception {
 
         String query = String.format("select id"
@@ -217,8 +216,8 @@ public class ParecerDAO {
                 List<Nota> listaNotas = (new NotaDAO()).obtenhaListaNotaPorParecer(identificadorParecer);
 
                 objParecer = new Parecer(rs.getString(1),
-                        rs.getString(2), 
-                        listaRadocs, 
+                        rs.getString(2),
+                        listaRadocs,
                         listaPontuacao,
                         rs.getString(3),
                         listaNotas);
@@ -250,7 +249,6 @@ public class ParecerDAO {
 
     }
 
-   
     public void atualizeParecerCampoFundamentacao(String idParecer, String fundamentacao) throws Exception {
 
         String query = String.format("UPDATE Parecer"
@@ -261,7 +259,7 @@ public class ParecerDAO {
                 //Abre a conexão com o banco de dados utilizando a classe criada
 
                 Connection conn = ConexaoBanco.abreConexao()) {
-               ConexaoBanco.executeUpdate(conn, query);
+            ConexaoBanco.executeUpdate(conn, query);
 
         } catch (SQLException ex) {
 
@@ -270,8 +268,7 @@ public class ParecerDAO {
         }
 
     }
-    
-    
+
     public Parecer salveParecer(Parecer parecer) throws Exception {
 
         RadocDAO objRadoc = new RadocDAO();

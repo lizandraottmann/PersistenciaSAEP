@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.ufg.inf.es.saep.sandbox.dao;
 
 import br.ufg.inf.es.saep.sandbox.dominio.Avaliavel;
 import br.ufg.inf.es.saep.sandbox.dominio.CampoExigidoNaoFornecido;
 import br.ufg.inf.es.saep.sandbox.dominio.Nota;
+import br.ufg.inf.es.saep.sandbox.dominio.Pontuacao;
 import br.ufg.inf.es.saep.sandbox.dominio.TipoDeRegraInvalido;
-import br.ufg.inf.es.saep.sandbox.dominio.Valor;
 import br.ufg.inf.es.saep.sandbox.dominio.controller.ConexaoBanco;
 import static java.lang.System.out;
 import java.sql.Connection;
@@ -21,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 public class NotaDAO {
 
@@ -100,11 +94,14 @@ public class NotaDAO {
 
     private void salve(Nota nota, String idParecer) throws Exception {
 
+        String tipoOriginal = "";
+        String tipoNovoValor = "";
+
         String sql = "INSERT INTO Nota"
                 + "           (idParecer"
                 + "           ,idNota"
-                + "           ,original,justificativa,nova)"
-                + "VALUES" + "(?,?,?,?,?)";
+                + "           ,original,justificativa,nova,originalTipo,novoValorTipo)"
+                + "VALUES" + "(?,?,?,?,?,?,?)";
 
         try (PreparedStatement stmt = ConexaoBanco.abreConexao().prepareStatement(sql)) {
             stmt.setString(1, idParecer);
@@ -112,19 +109,36 @@ public class NotaDAO {
             stmt.setString(3, nota.getItemOriginal().toString());
             stmt.setString(4, nota.getJustificativa());
             stmt.setString(5, nota.getItemNovo().toString());
+
+            if (nota.getItemOriginal() instanceof Pontuacao) {
+                tipoOriginal = "Pontuacao";
+            } else {
+                tipoOriginal = "Relato";
+            }
+
+            if (nota.getItemNovo() instanceof Pontuacao) {
+                tipoNovoValor = "Pontuacao";
+            } else {
+                tipoNovoValor = "Relato";
+            }
+
+            stmt.setString(6, tipoOriginal);
+            stmt.setString(7, tipoNovoValor);
+
             stmt.execute();
         }
     }
 
     public List<Nota> obtenhaListaNotaPorParecer(String identificadorParecer) throws SQLException {
 
+        Nota objNota = null;
         String query = String.format("SELECT idParecer"
                 + "      ,idNota"
                 + "      ,original"
                 + "      ,justificativa"
                 + "      ,nova "
-                + "  FROM Nota"
-          + "where idParecer='%s'", identificadorParecer);
+                + "  FROM Nota "
+                + "where idParecer='%s'", identificadorParecer);
 
         List<Nota> listaNota = null;
 
@@ -142,27 +156,25 @@ public class NotaDAO {
                     listaNota = new ArrayList<>();
                 }
 
-               
-                Avaliavel teste= new Avaliavel() {
-                    @Override
-                    public Valor get(String atributo) {
-                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                    }
-                };
-                
-                  Avaliavel testeAux= new Avaliavel() {
-                    @Override
-                    public Valor get(String atributo) {
-                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                    }
-                };
-                
-                //   public Nota(Avaliavel origem, Avaliavel destino, String justificativa) {
-                  Nota objNota= new Nota(teste, testeAux,"");
-                //listaNota.add(rs.getObject(1).toString());*/
+                Avaliavel original = null;
+                Avaliavel novoValor = null;
+
+                if (rs.getObject(6) == "Pontuacao") {
+                    original = (new PontuacaoDAO()).obtenhaPontuacao(rs.getObject(3).toString());
+                } else {
+                    original = (new RelatoDAO()).obtenhaRelatos(rs.getObject(3).toString());
+                }
+
+                if (rs.getObject(7) == "Pontuacao") {
+                    novoValor = (new PontuacaoDAO()).obtenhaPontuacao(rs.getObject(2).toString());
+                } else {
+                    novoValor = (new RelatoDAO()).obtenhaRelatos(rs.getObject(2).toString());
+                }
+
+                objNota = new Nota(original, novoValor, rs.getObject(4).toString());
+
+                listaNota.add(objNota);
             }
-            
-            
 
         } catch (SQLException ex) {
 
@@ -192,12 +204,14 @@ public class NotaDAO {
 
     public Nota obtenhaListaNotaPorParecer(String identificadorParecer, Nota nota) throws SQLException {
 
+        Nota objNota = null;
         String query = String.format("SELECT idParecer"
                 + "      ,idNota"
                 + "      ,original"
                 + "      ,justificativa"
-                + "      ,nova "
-                + "  FROM Nota");
+                + "      ,nova, originalTipo,novoValorTipo "
+                + "  FROM Nota"
+                + " where idParecer='%s1'", identificadorParecer);
 
         try (
                 //Abre a conexão com o banco de dados utilizando a classe criada
@@ -207,26 +221,25 @@ public class NotaDAO {
             final ResultSetMetaData metaRS = rs.getMetaData();
             final int columnCount = metaRS.getColumnCount();
 
-            while (rs.next()) {
+            if (rs.next()) {
 
-               
-             Avaliavel teste= new Avaliavel() {
-                    @Override
-                    public Valor get(String atributo) {
-                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                    }
-                };
-                
-                  Avaliavel testeAux= new Avaliavel() {
-                    @Override
-                    public Valor get(String atributo) {
-                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                    }
-                };
-                
-                //   public Nota(Avaliavel origem, Avaliavel destino, String justificativa) {
-                  Nota objNota= new Nota(teste, testeAux,"");
-                //listaNota.add(rs.getObject(1).toString());*/
+                Avaliavel original = null;
+                Avaliavel novoValor = null;
+
+                if (rs.getObject(6) == "Pontuacao") {
+                    original = (new PontuacaoDAO()).obtenhaPontuacao(rs.getObject(3).toString());
+                } else {
+                    original = (new RelatoDAO()).obtenhaRelatos(rs.getObject(3).toString());
+                }
+
+                if (rs.getObject(7) == "Pontuacao") {
+                    novoValor = (new PontuacaoDAO()).obtenhaPontuacao(rs.getObject(2).toString());
+                } else {
+                    novoValor = (new RelatoDAO()).obtenhaRelatos(rs.getObject(2).toString());
+                }
+
+                objNota = new Nota(original, novoValor, rs.getObject(4).toString());
+
             }
 
         } catch (SQLException ex) {
@@ -251,7 +264,7 @@ public class NotaDAO {
             out.close();
         }
 
-        return nota;
+        return objNota;
     }
 
 }

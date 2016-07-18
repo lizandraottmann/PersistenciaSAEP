@@ -60,7 +60,7 @@ public class ParecerDAOImpl implements ParecerRepository {
     @Override
     public void removeNota(String id, Avaliavel original) {
 
-        if (!"".equals(id) && !"".equals(original)) {
+        if (!"".equals(id) && original != null) {
 
             NotaDAO objNota = new NotaDAO();
 
@@ -78,6 +78,9 @@ public class ParecerDAOImpl implements ParecerRepository {
         }
     }
 
+    
+    
+      
     @Override
     public void persisteParecer(Parecer parecer) {
 
@@ -104,6 +107,8 @@ public class ParecerDAOImpl implements ParecerRepository {
 
             } else {
 
+                Parecer objParecer2= objParecerDAO.obtenhaDadoParecerPeloID(parecer.getId());
+                
                 Logger.getLogger(ResolucaoDAO.class.getName()).log(Level.SEVERE, null, "Objeto já existente na base.");
                 throw new CampoExigidoNaoFornecido("Objeto já existente na base.");
             }

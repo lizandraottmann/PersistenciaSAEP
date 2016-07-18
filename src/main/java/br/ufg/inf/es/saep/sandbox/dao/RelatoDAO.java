@@ -83,6 +83,57 @@ public class RelatoDAO {
 
     }
 
+    public Relato obtenhaRelatos(String identificadorRelato) throws Exception {
+
+        Relato relato = null;
+        String query = String.format("select tipo, idValor, idRadoc"
+                + " from Relato "
+                + " where idRelato='%s'", identificadorRelato);
+
+        try (
+                //Abre a conexão com o banco de dados utilizando a classe criada
+
+                Connection conn = ConexaoBanco.abreConexao()) {
+
+            final ResultSet rs = ConexaoBanco.executeSelect(conn, query);
+            final ResultSetMetaData metaRS = rs.getMetaData();
+            final int columnCount = metaRS.getColumnCount();
+
+            if (rs.next()) {
+
+                Valor objValor = (new ValorDAO()).obtenhaValorPeloID(rs.getObject(3).toString());
+
+                Map<String, Valor> maps = new HashMap<>();
+                maps.put(rs.getObject(3).toString(), objValor);
+                relato = new Relato(rs.getObject(1).toString(), maps);
+
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(ResolucaoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new SQLException("Erro ao obter uma Relato:" + ex.getMessage());
+
+        } catch (TipoDeRegraInvalido ex) {
+            Logger.getLogger(ResolucaoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new TipoDeRegraInvalido("Erro ao obter uma Relato:" + ex.getMessage());
+
+        } catch (CampoExigidoNaoFornecido ex) {
+            Logger.getLogger(ResolucaoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new CampoExigidoNaoFornecido("Erro ao obter uma Relato:" + ex.getMessage());
+
+        } catch (Exception ex) {
+            Logger.getLogger(ResolucaoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new CampoExigidoNaoFornecido("Erro ao obter uma Relato:" + ex.getMessage());
+
+        } finally {
+
+            out.close();
+        }
+
+        return relato;
+
+    }
+
     private List<String> obtenhaListaIDRelatosPorRadoc(String identificadorRadoc) throws Exception {
 
         String query = String.format("select tipo, idValor, idRadoc"
@@ -212,33 +263,32 @@ public class RelatoDAO {
         Set<String> listaVariavel = relato.getVariaveis();
 
         listaVariavel.stream().forEach((temp) -> {
-                       
+
             try {
-                String idValor= (new ValorDAO()).salveValorComRetornoString(relato.get(temp));
-                
-                  String sql = "INSERT INTO Relato"
+                String idValor = (new ValorDAO()).salveValorComRetornoString(relato.get(temp));
+
+                String sql = "INSERT INTO Relato"
                         + "           (tipo"
-                        + "           ,idValor,idRadoc)"
+                        + "           ,idValor,idRadoc,idRelato )"
                         + "VALUES" + "(?,?,?)";
 
                 try (PreparedStatement stmt = ConexaoBanco.abreConexao().prepareStatement(sql)) {
                     stmt.setString(1, relato.getTipo());
                     stmt.setString(2, idValor);
-                      stmt.setString(3, "");
-                    
+                    stmt.setString(3, "");
+                    stmt.setString(4, (new UtilidadesDAO().obtenhaProximoID("Relato", "idRelato")));
+
                     stmt.execute();
 
-                    
                 } catch (Exception ex) {
                     Logger.getLogger(RegraDAO.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                
+
             } catch (Exception ex) {
                 Logger.getLogger(RelatoDAO.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
-          
-            });
+
+        });
 
     }
 }
