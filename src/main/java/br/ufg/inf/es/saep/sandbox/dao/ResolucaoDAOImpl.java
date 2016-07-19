@@ -13,12 +13,17 @@ import java.util.logging.Logger;
 
 /**
  * Classe responsavel pela implementação da
- * interface {@link ResoluçãoRepository }
+ * interface {@link ResolucaoRepository }
  * 
  */
 public class ResolucaoDAOImpl implements ResolucaoRepository {
 
-    
+    /**
+     * Responsavél por recuperar a resolucao referente ao
+     * id informado por meio da função obtenhaDadosResolucao
+     * see {@link ResolucaoDAO}
+     * @return {@code Resolucao} identificada por {@code id}.
+     */
     @Override
     public Resolucao byId(String identificador) {
 
@@ -60,9 +65,19 @@ public class ResolucaoDAOImpl implements ResolucaoRepository {
         } else {
             return resolucao;
         }
-
     }
-
+   /** 
+     * Responsável por persistir uma resolução
+     * @throws CampoExigidoNaoFornecido Caso o identificador não
+     * seja fornecido.
+     *
+     * @throws IdentificadorExistente Caso uma resolução com identificador
+     * igual àquele fornecido já exista.
+     *
+     * @param resolucao A resolução a ser persistida.
+     *
+     * @return O identificador único da resolução,.
+     */
     @Override
     public String persiste(Resolucao resolucao) {
 
@@ -108,7 +123,10 @@ public class ResolucaoDAOImpl implements ResolucaoRepository {
 
         return (null != resolucaoAux) ? resolucaoAux.getId() : null;
     }
-
+    /**
+     * Remove a resolução com o identificador
+     * fornecido
+     */
     @Override
     public boolean remove(String identificador) {
 
@@ -131,7 +149,10 @@ public class ResolucaoDAOImpl implements ResolucaoRepository {
         }
 
     }
-
+   /**
+     * Recupera a lista dos identificadores das
+     * resoluções disponíveis.
+     */
     @Override
     public List<String> resolucoes() {
 
@@ -186,7 +207,12 @@ public class ResolucaoDAOImpl implements ResolucaoRepository {
         }
 
     }
-
+    /**
+     * Rsponsável por remover o tipo que 
+     * possui o código fornecido.     *
+     * @throws ResolucaoUsaTipoException O tipo
+     * é empregado por pelo menos uma resolução.
+     */
     @Override
     public void removeTipo(String codigo) {
 
@@ -234,7 +260,10 @@ public class ResolucaoDAOImpl implements ResolucaoRepository {
         }
 
     }
-
+   /**
+     * Recupera a lista de tipos que possuam
+     * os nomes fornecidos     * .
+     */
     @Override
     public List<Tipo> tiposPeloNome(String nome) {
 
