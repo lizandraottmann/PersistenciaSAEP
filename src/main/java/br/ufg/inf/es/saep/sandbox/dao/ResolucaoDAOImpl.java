@@ -12,11 +12,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author Lizandra Ottmann
+ * Classe responsavel pela implementação da
+ * interface {@link ResoluçãoRepository }
+ * 
  */
 public class ResolucaoDAOImpl implements ResolucaoRepository {
 
+    
     @Override
     public Resolucao byId(String identificador) {
 
